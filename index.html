@@ -294,19 +294,28 @@
                 </div>
             </section>
 
-            <!-- PRODUCT DISPLAY GRID (MODIFIED TO HORIZONTAL SWIPE) -->
-            <section id="product-display" class="max-w-5xl mx-auto px-4 sm:px-6 py-16 md:py-24 hidden opacity-0 transition-opacity duration-500">
-                <div class="flex items-center justify-between mb-8 md:mb-10 border-b border-gray-300 pb-4">
-                    <h2 id="current-category-title" class="text-2xl md:text-3xl font-cloud font-semibold text-gray-900">Products</h2>
-                    <button onclick="hideProducts()" class="text-xs md:text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors border border-gray-300 rounded-full px-4 md:px-5 py-2 bg-white/80 backdrop-blur hover:bg-white shadow-sm">
-                        ← Back
-                    </button>
-                </div>
-                <!-- UPDATED WRAPPER FOR HORIZONTAL SWIPING -->
-                <div id="product-grid" class="flex overflow-x-auto snap-x snap-mandatory gap-6 w-full no-scrollbar pb-8 px-4">
-                    <!-- Products rendered dynamically -->
-                </div>
-            </section>
+           <!-- PRODUCT DISPLAY GRID (MODIFIED TO HORIZONTAL SWIPE WITH ARROWS) -->
+    <section id="product-display" class="max-w-5xl mx-auto px-4 sm:px-6 py-16 md:py-24 hidden opacity-0 transition-opacity duration-500">
+        <div class="flex items-center justify-between mb-8 md:mb-10 border-b border-gray-300 pb-4">
+            <h2 id="current-category-title" class="text-2xl md:text-3xl font-cloud font-semibold text-gray-900">Products</h2>
+            <button onclick="hideProducts()" class="text-xs md:text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors border border-gray-300 rounded-full px-4 md:px-5 py-2 bg-white/80 backdrop-blur hover:bg-white shadow-sm">
+                ← Back
+            </button>
+        </div>
+        
+        <!-- Relative Wrapper with Left/Right Scroll Buttons -->
+        <div class="relative">
+            <button type="button" onclick="scrollCategoryRow('product-grid', -1)" aria-label="Scroll left"
+                class="flex absolute left-1 md:-left-5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 md:w-10 md:h-10 items-center justify-center rounded-full bg-white/95 backdrop-blur shadow-lg border border-pink-100 text-gray-700 hover:text-pink-500 transition-colors pb-1 text-xl cursor-pointer">‹</button>
+            
+            <div id="product-grid" class="flex overflow-x-auto snap-x snap-mandatory gap-6 w-full no-scrollbar pb-8 px-2 scroll-pl-2 overscroll-x-contain">
+                <!-- Products rendered dynamically -->
+            </div>
+
+            <button type="button" onclick="scrollCategoryRow('product-grid', 1)" aria-label="Scroll right"
+                class="flex absolute right-1 md:-right-5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 md:w-10 md:h-10 items-center justify-center rounded-full bg-white/95 backdrop-blur shadow-lg border border-pink-100 text-gray-700 hover:text-pink-500 transition-colors pb-1 text-xl cursor-pointer">›</button>
+        </div>
+    </section>
 
         </div>
     </div>
