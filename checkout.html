@@ -219,7 +219,7 @@
         let currentUser = null;
         let cartItems = [];
         let totalAmount = 0;
-        let finalAmount = 0; // Added variable to track Subtotal + Shipping
+        let finalAmount = 0;
 
         async function initCheckout() {
             const { data: { user } } = await supabase.auth.getUser();
@@ -259,7 +259,6 @@
             }
         }
 
-        // UPDATED LOGIC TO HANDLE DYNAMIC SHIPPING & TOTALS
         function renderOrderSummary() {
             const container = document.getElementById('checkout-cart-items');
             totalAmount = 0;
@@ -274,7 +273,11 @@
                             ${item.image ? `<img src="${item.image}" class="w-10 h-10 object-cover rounded-lg border border-gray-100">` : ''}
                             <div>
                                 <p class="font-medium text-gray-800 line-clamp-1">${item.title || 'Product'}</p>
-                                ${item.selected_color ? `<p class="text-xs text-gray-500 font-medium mt-0.5">Color: <span class="text-pink-600 font-semibold">${item.selected_color}</span></p>` : ''}
+                                ${item.selected_color || item.selected_size ? `<p class="text-xs text-gray-500 font-medium mt-0.5">
+                                    ${item.selected_size ? `Size: <span class="text-pink-600 font-semibold">${item.selected_size}</span>` : ''}
+                                    ${item.selected_size && item.selected_color ? `<span class="mx-1 text-gray-300">|</span>` : ''}
+                                    ${item.selected_color ? `Color: <span class="text-pink-600 font-semibold">${item.selected_color}</span>` : ''}
+                                </p>` : ''}
                                 <p class="text-xs text-gray-400">Qty: ${item.quantity || 1}</p>
                             </div>
                         </div>
@@ -283,11 +286,9 @@
                 `;
             }).join('');
 
-            // CALCULATE SHIPPING: ₹90 if subtotal is under ₹1000, otherwise FREE
             const shippingFee = totalAmount >= 1000 ? 0 : 90;
             finalAmount = totalAmount + shippingFee;
 
-            // UPDATE UI
             document.getElementById('summary-subtotal').innerText = `₹${totalAmount.toFixed(2)}`;
 
             const shippingElement = document.getElementById('summary-shipping');
@@ -298,7 +299,6 @@
             }
 
             document.getElementById('summary-total').innerText = `₹${finalAmount.toFixed(2)}`;
-
             document.getElementById('place-order-btn').innerText = `Pay ₹${finalAmount.toFixed(2)}`;
         }
 
@@ -352,7 +352,6 @@
             const phone = document.getElementById('cust-phone').value.trim();
             const shipping_address = document.getElementById('cust-address').value.trim();
 
-            // Only ids/quantities/options are sent: the server works out the prices itself
             const items = cartItems.map(i => ({
                 id: i.id,
                 quantity: i.quantity || 1,
