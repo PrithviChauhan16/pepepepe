@@ -13,6 +13,7 @@ import { supabase } from './supabaseClient.js';
   let currentUser = null;
   let selectedColor = null;
   let selectedSize = null;
+  let selectedSizePrice = null;
 
   // Helper Function for Generating Dynamic Price HTML with Discount Badges
   function getPriceDisplayHTML(prod) {
@@ -100,7 +101,6 @@ import { supabase } from './supabaseClient.js';
         cart = data.map(item => {
           let finalPrice = item.products.price;
           
-          // Parse sizes to check for size-specific pricing
           let sizes = [];
           try {
             sizes = Array.isArray(item.products.sizes) ? item.products.sizes : JSON.parse(item.products.sizes || '[]');
@@ -110,7 +110,6 @@ import { supabase } from './supabaseClient.js';
             }
           }
 
-          // If a size is selected and it has a custom price (e.g., "50cm:1200"), override the base price
           if (item.selected_size) {
             const matchedSize = sizes.find(s => s.includes(':') && s.split(':')[0].trim() === item.selected_size);
             if (matchedSize) {
@@ -120,7 +119,7 @@ import { supabase } from './supabaseClient.js';
 
           return {
             ...item.products,
-            price: finalPrice, // <-- Overrides base price
+            price: finalPrice,
             quantity: item.quantity,
             cart_id: item.id,
             selected_color: item.selected_color || null,
@@ -158,6 +157,7 @@ import { supabase } from './supabaseClient.js';
 
   function selectSize(sizeName, sizePrice, btnElement) {
     selectedSize = sizeName;
+    selectedSizePrice = sizePrice;
     
     document.querySelectorAll('.size-btn').forEach(btn => {
       btn.classList.remove('border-pink-500', 'bg-pink-50', 'text-pink-600', 'ring-2', 'ring-pink-400');
@@ -202,7 +202,6 @@ import { supabase } from './supabaseClient.js';
       }
     }
 
-    // Only force selection if there are MULTIPLE options available
     if (availableColors.length > 1 && !chosenColor) {
       openProductModal(productId);
       alert('Please select a color option before adding to cart.');
@@ -225,16 +224,16 @@ import { supabase } from './supabaseClient.js';
     }
 
     try {
-      // Extract specific size price if a size is chosen
       let finalPrice = product.price;
-      if (chosenSize) {
+      if (selectedSizePrice !== null && chosenSize === selectedSize) {
+        finalPrice = selectedSizePrice;
+      } else if (chosenSize) {
         const matchedSize = availableSizes.find(s => s.includes(':') && s.split(':')[0].trim() === chosenSize);
         if (matchedSize) {
           finalPrice = parseFloat(matchedSize.split(':')[1].trim());
         }
       }
 
-      // 1. Instant local storage update so checkout reads it immediately
       const existingIndex = cart.findIndex(p =>
         String(p.id) === String(productId) && 
         p.selected_color === (chosenColor || null) &&
@@ -243,11 +242,11 @@ import { supabase } from './supabaseClient.js';
       
       if (existingIndex > -1) {
         cart[existingIndex].quantity = (Number(cart[existingIndex].quantity) || 1) + 1;
-        cart[existingIndex].price = finalPrice; // Ensure price stays updated
+        cart[existingIndex].price = finalPrice;
       } else if (product) {
         cart.push({ 
           ...product, 
-          price: finalPrice, // <-- Overrides base price for checkout
+          price: finalPrice,
           quantity: 1, 
           selected_color: chosenColor || null, 
           selected_size: chosenSize || null 
@@ -255,7 +254,6 @@ import { supabase } from './supabaseClient.js';
       }
       updateCartUI();
 
-      // 2. Background database sync if user is logged in
       if (currentUser) {
         let query = supabase
           .from('cart')
@@ -568,6 +566,7 @@ import { supabase } from './supabaseClient.js';
 
     selectedColor = null;
     selectedSize = null; 
+    selectedSizePrice = null;
 
     const modal = document.getElementById('product-modal');
     const title = document.getElementById('modal-title');
@@ -600,7 +599,6 @@ import { supabase } from './supabaseClient.js';
       }
     }
 
-    // Auto-select single color if only 1 option exists
     if (colors.length === 1) {
       selectedColor = colors[0];
     }
@@ -610,8 +608,8 @@ import { supabase } from './supabaseClient.js';
         colorsContainer.classList.remove('hidden');
         colorsOptions.innerHTML = colors.map(color => `
           <button type="button" 
-                onclick="selectColor('${color}', this)"
-                class="color-btn border ${colors.length === 1 ? 'border-pink-500 bg-pink-50 text-pink-600 ring-2 ring-pink-400' : 'border-gray-300 text-gray-700'} rounded-full px-4 py-1.5 text-xs font-medium hover:border-pink-500 transition-all">
+              onclick="selectColor('${color}', this)"
+              class="color-btn border ${colors.length === 1 ? 'border-pink-500 bg-pink-50 text-pink-600 ring-2 ring-pink-400' : 'border-gray-300 text-gray-700'} rounded-full px-4 py-1.5 text-xs font-medium hover:border-pink-500 transition-all">
             ${color}
           </button>
         `).join('');
@@ -630,13 +628,15 @@ import { supabase } from './supabaseClient.js';
       }
     }
 
-    // Auto-select single size if only 1 option exists
     if (sizes.length === 1) {
       let singleSizeStr = sizes[0];
       if (singleSizeStr.includes(':')) {
-        selectedSize = singleSizeStr.split(':')[0].trim();
+        const parts = singleSizeStr.split(':');
+        selectedSize = parts[0].trim();
+        selectedSizePrice = Math.max(0, parseFloat(parts[1].trim() || prod.price || 0));
       } else {
         selectedSize = singleSizeStr.trim();
+        selectedSizePrice = Math.max(0, parseFloat(prod.price || 0));
       }
     }
 
@@ -682,37 +682,23 @@ import { supabase } from './supabaseClient.js';
     if (desc) desc.textContent = prod.description || 'No description available.';
 
     if (price) {
-      let sellingPrice = parseFloat(prod.price || 0);
+      let initialDisplayPrice = selectedSizePrice !== null ? selectedSizePrice : parseFloat(prod.price || 0);
       let originalPrice = parseFloat(prod.original_price || 0);
       let discountPercent = parseFloat(prod.discount || prod.discount_percentage || 0);
 
       if (discountPercent > 0) {
-        if (originalPrice <= sellingPrice) {
-          originalPrice = sellingPrice / (1 - (discountPercent / 100));
+        if (originalPrice <= initialDisplayPrice) {
+          originalPrice = initialDisplayPrice / (1 - (discountPercent / 100));
         }
         price.innerHTML = `
             <div class="flex items-center gap-3">
-                <span class="text-pink-500 font-bold text-2xl">₹${sellingPrice.toFixed(2)}</span>
+                <span class="text-pink-500 font-bold text-2xl">₹${initialDisplayPrice.toFixed(2)}</span>
                 <span class="text-gray-400 text-lg line-through">₹${originalPrice.toFixed(2)}</span>
                 <span class="text-sm font-bold text-green-600 bg-green-100 px-2.5 py-0.5 rounded-full">${discountPercent}% OFF</span>
             </div>
         `;
-      } else if (originalPrice > sellingPrice && originalPrice > 0) {
-        let calculatedDiscount = Math.round(((originalPrice - sellingPrice) / originalPrice) * 100);
-        
-        if (calculatedDiscount > 0) {
-            price.innerHTML = `
-                <div class="flex items-center gap-3">
-                    <span class="text-pink-500 font-bold text-2xl">₹${sellingPrice.toFixed(2)}</span>
-                    <span class="text-gray-400 text-lg line-through">₹${originalPrice.toFixed(2)}</span>
-                    <span class="text-sm font-bold text-green-600 bg-green-100 px-2.5 py-0.5 rounded-full">${calculatedDiscount}% OFF</span>
-                </div>
-            `;
-        } else {
-            price.innerHTML = `<span class="text-pink-500 font-bold text-2xl">₹${sellingPrice.toFixed(2)}</span>`;
-        }
       } else {
-        price.innerHTML = `<span class="text-pink-500 font-bold text-2xl">₹${sellingPrice.toFixed(2)}</span>`;
+        price.innerHTML = `<span class="text-pink-500 font-bold text-2xl">₹${initialDisplayPrice.toFixed(2)}</span>`;
       }
     }
 
@@ -738,7 +724,6 @@ import { supabase } from './supabaseClient.js';
       buyNowModalBtn.onclick = () => buyNow(prod.id, 'modal-buy-now-btn', selectedColor, selectedSize);
     }
 
-    // Sold-out items cannot be ordered
     [addCartBtn, buyNowModalBtn].forEach(btn => {
       if (!btn) return;
       if (btn.dataset.origHtml === undefined) btn.dataset.origHtml = btn.innerHTML;
