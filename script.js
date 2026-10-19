@@ -628,22 +628,22 @@ import { supabase } from './supabaseClient.js';
       }
     }
 
-    if (sizes.length === 1) {
-      let singleSizeStr = sizes[0];
-      if (singleSizeStr.includes(':')) {
-        const parts = singleSizeStr.split(':');
-        selectedSize = parts[0].trim();
-        selectedSizePrice = Math.max(0, parseFloat(parts[1].trim() || prod.price || 0));
-      } else {
-        selectedSize = singleSizeStr.trim();
-        selectedSizePrice = Math.max(0, parseFloat(prod.price || 0));
-      }
-    }
-
     if (sizesContainer && sizesOptions) {
       if (sizes.length > 0) {
         sizesContainer.classList.remove('hidden');
-        sizesOptions.innerHTML = sizes.map(sizeString => {
+        
+        // Auto-select the first size by default
+        let firstSizeStr = sizes[0];
+        if (firstSizeStr.includes(':')) {
+          const parts = firstSizeStr.split(':');
+          selectedSize = parts[0].trim();
+          selectedSizePrice = Math.max(0, parseFloat(parts[1].trim() || prod.price || 0));
+        } else {
+          selectedSize = firstSizeStr.trim();
+          selectedSizePrice = Math.max(0, parseFloat(prod.price || 0));
+        }
+
+        sizesOptions.innerHTML = sizes.map((sizeString, idx) => {
             let sizeName = sizeString;
             let sizePrice = Math.max(0, parseFloat(prod.price || 0));
 
@@ -653,10 +653,11 @@ import { supabase } from './supabaseClient.js';
                 sizePrice = Math.max(0, parseFloat(parts[1].trim() || 0));
             }
 
+            const isFirst = idx === 0;
             return `
               <button type="button" 
                       onclick="selectSize('${sizeName}', ${sizePrice}, this)"
-                      class="size-btn border ${sizes.length === 1 ? 'border-pink-500 bg-pink-50 text-pink-600 ring-2 ring-pink-400' : 'border-gray-300 text-gray-700'} rounded-full px-4 py-1.5 text-xs font-medium hover:border-pink-500 transition-all">
+                      class="size-btn border ${isFirst ? 'border-pink-500 bg-pink-50 text-pink-600 ring-2 ring-pink-400' : 'border-gray-300 text-gray-700'} rounded-full px-4 py-1.5 text-xs font-medium hover:border-pink-500 transition-all">
                 ${sizeName}
               </button>
             `;
@@ -664,6 +665,8 @@ import { supabase } from './supabaseClient.js';
       } else {
         sizesContainer.classList.add('hidden');
         sizesOptions.innerHTML = '';
+        selectedSize = null;
+        selectedSizePrice = null;
       }
     }
 
