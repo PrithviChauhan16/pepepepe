@@ -243,7 +243,7 @@
         async function loadCartFromSupabase() {
             const { data, error } = await supabase
                 .from('cart')
-                .select('id, quantity, product_id, selected_color, products(*)')
+                .select('id, quantity, product_id, selected_color, selected_size, products(*)')
                 .eq('user_id', currentUser.id);
 
             if (error) {
@@ -252,15 +252,36 @@
                 return;
             }
 
-            cartItems = (data || []).map(row => ({
-                cartRecordId: row.id,
-                productId: row.product_id,
-                quantity: row.quantity,
-                selected_color: row.selected_color || null,
-                title: row.products?.title || 'Unknown Product',
-                price: parseFloat(row.products?.price || 0),
-                image: parseImage(row.products?.images)
-            }));
+            cartItems = (data || []).map(row => {
+                let finalPrice = parseFloat(row.products?.price || 0);
+                
+                // Recalculate size-specific price for Supabase rows to be safe
+                if (row.selected_size) {
+                    let sizes = [];
+                    try {
+                        sizes = Array.isArray(row.products.sizes) ? row.products.sizes : JSON.parse(row.products.sizes || '[]');
+                    } catch (e) {
+                        if (typeof row.products.sizes === 'string') {
+                            sizes = row.products.sizes.split(',').map(s => s.trim()).filter(Boolean);
+                        }
+                    }
+                    const matchedSize = sizes.find(s => s.includes(':') && s.split(':')[0].trim() === row.selected_size);
+                    if (matchedSize) {
+                        finalPrice = parseFloat(matchedSize.split(':')[1].trim());
+                    }
+                }
+
+                return {
+                    cartRecordId: row.id,
+                    productId: row.product_id,
+                    quantity: row.quantity,
+                    selected_color: row.selected_color || null,
+                    selected_size: row.selected_size || null,
+                    title: row.products?.title || 'Unknown Product',
+                    price: finalPrice,
+                    image: parseImage(row.products?.images)
+                };
+            });
 
             saveToLocalStorage();
             renderCart();
@@ -273,6 +294,7 @@
                 productId: item.id || item.productId,
                 quantity: item.quantity || 1,
                 selected_color: item.selected_color || null,
+                selected_size: item.selected_size || null,
                 title: item.title || 'Product',
                 price: parseFloat(item.price || 0),
                 image: parseImage(item.images || item.image)
@@ -325,7 +347,11 @@
                             <img src="${item.image}" alt="${item.title}" class="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-2xl border border-gray-100 flex-shrink-0">
                             <div>
                                 <h3 class="font-semibold text-gray-900 text-base sm:text-lg">${item.title}</h3>
-                                ${item.selected_color ? `<p class="text-xs text-gray-500 font-medium mt-0.5">Color: <span class="text-pink-600 font-semibold">${item.selected_color}</span></p>` : ''}
+                                ${item.selected_color || item.selected_size ? `<p class="text-xs text-gray-500 font-medium mt-0.5">
+                                    ${item.selected_size ? `Size: <span class="text-pink-600 font-semibold">${item.selected_size}</span>` : ''}
+                                    ${item.selected_size && item.selected_color ? `<span class="mx-1 text-gray-300">|</span>` : ''}
+                                    ${item.selected_color ? `Color: <span class="text-pink-600 font-semibold">${item.selected_color}</span>` : ''}
+                                </p>` : ''}
                                 <p class="text-pink-500 font-bold text-sm sm:text-base mt-1">₹${item.price.toFixed(2)}</p>
                             </div>
                         </div>
@@ -397,7 +423,8 @@
                 price: i.price,
                 image: i.image,
                 quantity: i.quantity,
-                selected_color: i.selected_color
+                selected_color: i.selected_color,
+                selected_size: i.selected_size
             }));
             localStorage.setItem('pepe_cart', JSON.stringify(formatted));
         }
