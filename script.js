@@ -179,6 +179,11 @@ import { supabase } from './supabaseClient.js';
     const product = products.find(p => String(p.id) === String(productId));
     if (!product && !currentUser) return false;
 
+    if (product && product.sold_out) {
+      alert('Sorry, this item is sold out.');
+      return false;
+    }
+
     let availableColors = [];
     try {
       availableColors = Array.isArray(product?.colors) ? product.colors : JSON.parse(product?.colors || '[]');
@@ -494,6 +499,7 @@ import { supabase } from './supabaseClient.js';
             <div onclick="openProductModal('${prod.id}')" class="product-card min-w-0 w-64 md:w-72 flex-shrink-0 snap-center bg-white rounded-[1.5rem] md:rounded-[2rem] shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100 flex flex-col relative group overflow-hidden cursor-pointer">
                 
                 <div class="relative w-full aspect-square bg-[#FDFBF7] overflow-hidden group/slider rounded-t-[1.5rem] md:rounded-t-[2rem]">
+                ${prod.sold_out ? `<div class="absolute inset-0 z-40 bg-black/50 backdrop-blur-[2px] flex items-center justify-center pointer-events-none"><span class="bg-white/95 text-gray-900 text-xs md:text-sm font-bold uppercase tracking-widest px-4 py-1.5 rounded-full shadow-lg">Sold Out</span></div>` : ''}
                     <div id="slider-${prod.id}" class="flex overflow-x-auto overflow-y-hidden snap-x snap-mandatory h-full w-full no-scrollbar relative z-10 touch-pan-x" onscroll="updateSliderDots(event, '${prod.id}')">
                         ${imagesArr.map((img) => `
                             <div class="min-w-full h-full flex-none snap-center flex items-center justify-center p-3 md:p-6">
@@ -525,11 +531,11 @@ import { supabase } from './supabaseClient.js';
                     <p class="text-gray-400 text-[10px] md:text-sm mb-4 mt-auto line-clamp-1">${prod.category || 'Premium Plushie'}</p>
                     
                     <div class="grid grid-cols-2 gap-2 mt-auto z-10">
-                        <button id="btn-cart-${prod.id}" onclick="event.stopPropagation(); addToCart('${prod.id}', 'btn-cart-${prod.id}')" class="w-full bg-gray-100 text-gray-800 py-2.5 rounded-xl text-xs font-semibold hover:bg-gray-200 active:scale-95 transition-all flex justify-center items-center gap-1">
-                            Add to Cart
+                        <button id="btn-cart-${prod.id}" ${prod.sold_out ? 'disabled style="opacity:.45;cursor:not-allowed;pointer-events:none"' : ''} onclick="event.stopPropagation(); addToCart('${prod.id}', 'btn-cart-${prod.id}')" class="w-full bg-gray-100 text-gray-800 py-2.5 rounded-xl text-xs font-semibold hover:bg-gray-200 active:scale-95 transition-all flex justify-center items-center gap-1">
+                            ${prod.sold_out ? 'Sold Out' : 'Add to Cart'}
                         </button>
-                        <button id="btn-buy-${prod.id}" onclick="event.stopPropagation(); buyNow('${prod.id}', 'btn-buy-${prod.id}')" class="w-full bg-brand-900 text-white py-2.5 rounded-xl text-xs font-semibold hover:bg-pink-500 active:scale-95 transition-all shadow-md flex justify-center items-center gap-1">
-                            Buy Now
+                        <button id="btn-buy-${prod.id}" ${prod.sold_out ? 'disabled style="opacity:.45;cursor:not-allowed;pointer-events:none"' : ''} onclick="event.stopPropagation(); buyNow('${prod.id}', 'btn-buy-${prod.id}')" class="w-full bg-brand-900 text-white py-2.5 rounded-xl text-xs font-semibold hover:bg-pink-500 active:scale-95 transition-all shadow-md flex justify-center items-center gap-1">
+                            ${prod.sold_out ? 'Sold Out' : 'Buy Now'}
                         </button>
                     </div>
                 </div>
@@ -731,6 +737,17 @@ import { supabase } from './supabaseClient.js';
     if (buyNowModalBtn) {
       buyNowModalBtn.onclick = () => buyNow(prod.id, 'modal-buy-now-btn', selectedColor, selectedSize);
     }
+
+    // Sold-out items cannot be ordered
+    [addCartBtn, buyNowModalBtn].forEach(btn => {
+      if (!btn) return;
+      if (btn.dataset.origHtml === undefined) btn.dataset.origHtml = btn.innerHTML;
+      const soldOut = Boolean(prod.sold_out);
+      btn.disabled = soldOut;
+      btn.style.opacity = soldOut ? '0.45' : '';
+      btn.style.cursor = soldOut ? 'not-allowed' : '';
+      btn.innerHTML = soldOut ? 'Sold Out' : btn.dataset.origHtml;
+    });
 
     if (modal) {
       modal.classList.remove('hidden');
@@ -945,6 +962,7 @@ import { supabase } from './supabaseClient.js';
           <div onclick="openProductModal('${prod.id}')" class="product-card min-w-0 w-64 md:w-72 flex-shrink-0 bg-white rounded-[1.5rem] md:rounded-[2rem] shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100 flex flex-col relative group overflow-hidden cursor-pointer">
               
               <div class="relative w-full aspect-square bg-[#FDFBF7] overflow-hidden group/slider rounded-t-[1.5rem] md:rounded-t-[2rem]">
+                ${prod.sold_out ? `<div class="absolute inset-0 z-40 bg-black/50 backdrop-blur-[2px] flex items-center justify-center pointer-events-none"><span class="bg-white/95 text-gray-900 text-xs md:text-sm font-bold uppercase tracking-widest px-4 py-1.5 rounded-full shadow-lg">Sold Out</span></div>` : ''}
                   <div id="slider-promo-${prod.id}" class="flex overflow-x-auto overflow-y-hidden snap-x snap-mandatory h-full w-full no-scrollbar relative z-10 touch-pan-x" onscroll="updateSliderDots(event, 'promo-${prod.id}')">
                       ${imagesArr.map((img) => `
                           <div class="min-w-full h-full flex-none snap-center flex items-center justify-center p-3 md:p-6">
@@ -970,11 +988,11 @@ import { supabase } from './supabaseClient.js';
                   <p class="text-gray-400 text-[10px] md:text-sm mb-4 mt-auto line-clamp-1">${prod.category || 'Best Seller'}</p>
                   
                   <div class="grid grid-cols-2 gap-2 mt-auto z-10">
-                      <button id="btn-promo-cart-${prod.id}" onclick="event.stopPropagation(); addToCart('${prod.id}', 'btn-promo-cart-${prod.id}')" class="w-full bg-gray-100 text-gray-800 py-2.5 rounded-xl text-xs font-semibold hover:bg-gray-200 active:scale-95 transition-all flex justify-center items-center gap-1">
-                          Add to Cart
+                      <button id="btn-promo-cart-${prod.id}" ${prod.sold_out ? 'disabled style="opacity:.45;cursor:not-allowed;pointer-events:none"' : ''} onclick="event.stopPropagation(); addToCart('${prod.id}', 'btn-promo-cart-${prod.id}')" class="w-full bg-gray-100 text-gray-800 py-2.5 rounded-xl text-xs font-semibold hover:bg-gray-200 active:scale-95 transition-all flex justify-center items-center gap-1">
+                          ${prod.sold_out ? 'Sold Out' : 'Add to Cart'}
                       </button>
-                      <button id="btn-promo-buy-${prod.id}" onclick="event.stopPropagation(); buyNow('${prod.id}', 'btn-promo-buy-${prod.id}')" class="w-full bg-brand-900 text-white py-2.5 rounded-xl text-xs font-semibold hover:bg-pink-500 active:scale-95 transition-all shadow-md flex justify-center items-center gap-1">
-                          Buy Now
+                      <button id="btn-promo-buy-${prod.id}" ${prod.sold_out ? 'disabled style="opacity:.45;cursor:not-allowed;pointer-events:none"' : ''} onclick="event.stopPropagation(); buyNow('${prod.id}', 'btn-promo-buy-${prod.id}')" class="w-full bg-brand-900 text-white py-2.5 rounded-xl text-xs font-semibold hover:bg-pink-500 active:scale-95 transition-all shadow-md flex justify-center items-center gap-1">
+                          ${prod.sold_out ? 'Sold Out' : 'Buy Now'}
                       </button>
                   </div>
               </div>
