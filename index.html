@@ -96,7 +96,7 @@
         <div class="flex items-center justify-between">
 
             <a href="#home" class="flex items-center ml-2">
-                <img src="1pepe-logo.png" alt="PEPEKUN Logo" class="h-10 md:h-12 w-auto object-contain">
+                <img src="1pepe-logo.png" alt="PEPEKUN Logo" class="h-10 md:h-12 w-auto object-contain" width="160" height="48" fetchpriority="high">
             </a>
 
             <!-- Desktop Links -->
@@ -152,35 +152,36 @@
 
         <div class="relative z-10 pt-24 md:pt-28 pb-16">
 
-            <!-- BANNER -->
+            <!-- BANNER (Hero: eager load & high priority) -->
             <header id="home"
                 class="relative w-full max-w-7xl mx-auto px-4 md:px-6 rounded-[2rem] md:rounded-[3rem] overflow-hidden bg-transparent flex justify-center">
                 <img id="banner-slider" src="banner.png" class="w-full h-auto object-contain transition-opacity duration-500 shadow-lg rounded-[2rem] md:rounded-[3rem]"
-                    alt="PEPEKUN Banner">
+                    alt="PEPEKUN Banner" loading="eager" fetchpriority="high">
             </header>
-<!-- HUG LIFE PEPE KUN BANNER SUB-SECTION -->
-    <section class="relative w-full max-w-7xl mx-auto px-4 md:px-6 my-6">
-        <!-- Glassmorphism Container with Soft Translucency -->
-        <div class="relative rounded-[2rem] md:rounded-[2.5rem] overflow-hidden bg-white/30 backdrop-blur-md border border-white/60 shadow-[0_8px_32px_rgba(255,182,193,0.15)] p-6 md:p-8 text-center flex flex-col items-center justify-center">
-            
-            <!-- Soft Toys & Pastel Background Glow Elements (Mobile-Friendly) -->
-            <div class="absolute -left-8 -bottom-8 w-32 h-32 md:w-40 md:h-40 bg-pink-300/30 rounded-full blur-2xl pointer-events-none"></div>
-            <div class="absolute -right-8 -top-8 w-32 h-32 md:w-40 md:h-40 bg-purple-300/30 rounded-full blur-2xl pointer-events-none"></div>
 
-            <!-- Content -->
-            <div class="relative z-10 space-y-2">
-                <h3 class="text-2xl sm:text-3xl md:text-4xl font-cloud font-bold text-gray-900 tracking-wide uppercase drop-shadow-sm">
-                    HUG LIFE LOVE PEPEKUN
-                </h3>
-                <p class="text-xs sm:text-sm text-gray-600 font-medium max-w-md mx-auto">
-                    Wrapped in cloud-like softness, crafted to bring endless warmth and smiles.
-                </p>
-            </div>
+            <!-- HUG LIFE PEPE KUN BANNER SUB-SECTION -->
+            <section class="relative w-full max-w-7xl mx-auto px-4 md:px-6 my-6">
+                <!-- Glassmorphism Container with Soft Translucency -->
+                <div class="relative rounded-[2rem] md:rounded-[2.5rem] overflow-hidden bg-white/30 backdrop-blur-md border border-white/60 shadow-[0_8px_32px_rgba(255,182,193,0.15)] p-6 md:p-8 text-center flex flex-col items-center justify-center">
+                    
+                    <!-- Soft Toys & Pastel Background Glow Elements -->
+                    <div class="absolute -left-8 -bottom-8 w-32 h-32 md:w-40 md:h-40 bg-pink-300/30 rounded-full blur-2xl pointer-events-none"></div>
+                    <div class="absolute -right-8 -top-8 w-32 h-32 md:w-40 md:h-40 bg-purple-300/30 rounded-full blur-2xl pointer-events-none"></div>
 
-        </div>
-    </section>
+                    <!-- Content -->
+                    <div class="relative z-10 space-y-2">
+                        <h3 class="text-2xl sm:text-3xl md:text-4xl font-cloud font-bold text-gray-900 tracking-wide uppercase drop-shadow-sm">
+                            HUG LIFE LOVE PEPEKUN
+                        </h3>
+                        <p class="text-xs sm:text-sm text-gray-600 font-medium max-w-md mx-auto">
+                            Wrapped in cloud-like softness, crafted to bring endless warmth and smiles.
+                        </p>
+                    </div>
+
+                </div>
+            </section>
             
-            <!-- PREMIUM TRUST BANNER (INTERACTIVE FLIP CARDS WITH PHOTOS) -->
+            <!-- PREMIUM TRUST BANNER (Lazy-loaded images) -->
             <section class="py-12 bg-white/50 backdrop-blur-sm border-y border-pink-50/50 shadow-[0_4px_20px_rgba(0,0,0,0.02)] mt-8">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 text-center">
                     
@@ -188,7 +189,7 @@
                     <div class="group h-36 md:h-40 w-full [perspective:1000px]">
                         <div class="trust-card relative h-full w-full rounded-2xl shadow-sm transition-all duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)] cursor-pointer">
                             <div class="absolute inset-0 h-full w-full rounded-2xl [backface-visibility:hidden] bg-white border border-pink-100 overflow-hidden shadow-[0_2px_10px_rgba(0,0,0,0.02)] flex items-end justify-center pb-4">
-                                <img src="card-1.png" alt="Ultra-Soft" class="absolute inset-0 w-full h-full object-cover z-0 transition-transform duration-700 group-hover:scale-110">
+                                <img src="card-1.png" alt="Ultra-Soft" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover z-0 transition-transform duration-700 group-hover:scale-110">
                                 <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10"></div>
                                 <h4 class="text-xs md:text-sm font-bold text-white tracking-wide uppercase relative z-20">Ultra-Soft</h4>
                             </div>
@@ -203,7 +204,7 @@
                     <div class="group h-36 md:h-40 w-full [perspective:1000px]">
                         <div class="trust-card relative h-full w-full rounded-2xl shadow-sm transition-all duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)] cursor-pointer">
                             <div class="absolute inset-0 h-full w-full rounded-2xl [backface-visibility:hidden] bg-white border border-pink-100 overflow-hidden shadow-[0_2px_10px_rgba(0,0,0,0.02)] flex items-end justify-center pb-4">
-                                <img src="card-2.png" alt="Washable" class="absolute inset-0 w-full h-full object-cover z-0 transition-transform duration-700 group-hover:scale-110">
+                                <img src="card-2.png" alt="Washable" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover z-0 transition-transform duration-700 group-hover:scale-110">
                                 <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10"></div>
                                 <h4 class="text-xs md:text-sm font-bold text-white tracking-wide uppercase relative z-20">Washable</h4>
                             </div>
@@ -218,7 +219,7 @@
                     <div class="group h-36 md:h-40 w-full [perspective:1000px]">
                         <div class="trust-card relative h-full w-full rounded-2xl shadow-sm transition-all duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)] cursor-pointer">
                             <div class="absolute inset-0 h-full w-full rounded-2xl [backface-visibility:hidden] bg-white border border-pink-100 overflow-hidden shadow-[0_2px_10px_rgba(0,0,0,0.02)] flex items-end justify-center pb-4">
-                                <img src="card-3.png" alt="Durable" class="absolute inset-0 w-full h-full object-cover z-0 transition-transform duration-700 group-hover:scale-110">
+                                <img src="card-3.png" alt="Durable" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover z-0 transition-transform duration-700 group-hover:scale-110">
                                 <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10"></div>
                                 <h4 class="text-xs md:text-sm font-bold text-white tracking-wide uppercase relative z-20 font-cloud">Durable</h4>
                             </div>
@@ -233,7 +234,7 @@
                     <div class="group h-36 md:h-40 w-full [perspective:1000px]">
                         <div class="trust-card relative h-full w-full rounded-2xl shadow-sm transition-all duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)] cursor-pointer">
                             <div class="absolute inset-0 h-full w-full rounded-2xl [backface-visibility:hidden] bg-white border border-pink-100 overflow-hidden shadow-[0_2px_10px_rgba(0,0,0,0.02)] flex items-end justify-center pb-4">
-                                <img src="card-4.png" alt="Gift-Ready" class="absolute inset-0 w-full h-full object-cover z-0 transition-transform duration-700 group-hover:scale-110">
+                                <img src="card-4.png" alt="Gift-Ready" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover z-0 transition-transform duration-700 group-hover:scale-110">
                                 <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10"></div>
                                 <h4 class="text-xs md:text-sm font-bold text-white tracking-wide uppercase relative z-20 font-cloud">Gift-Ready</h4>
                             </div>
@@ -254,12 +255,12 @@
                 </div>
                 <div class="relative">
                     <button type="button" data-arrow="left" onclick="scrollCategoryRow('category-grid', -1)" aria-label="Scroll left"
-                        class="flex absolute left-1 md:-left-5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 md:w-10 md:h-10 items-center justify-center rounded-full bg-white/95 backdrop-blur shadow-lg border border-pink-100 text-gray-700 hover:text-pink-500 transition-colors pb-1 text-xl">‹</button>
+                        class="flex absolute left-1 md:-left-5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 md:w-10 md:h-10 items-center justify-center rounded-full bg-white/95 backdrop-blur shadow-lg border border-pink-100 text-gray-700 hover:text-pink-500 transition-colors pb-1 text-xl cursor-pointer">‹</button>
                     <div id="category-grid" class="flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-4 no-scrollbar py-4 px-2 scroll-pl-2 overscroll-x-contain">
                         <!-- Dynamic categories go here -->
                     </div>
                     <button type="button" data-arrow="right" onclick="scrollCategoryRow('category-grid', 1)" aria-label="Scroll right"
-                        class="flex absolute right-1 md:-right-5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 md:w-10 md:h-10 items-center justify-center rounded-full bg-white/95 backdrop-blur shadow-lg border border-pink-100 text-gray-700 hover:text-pink-500 transition-colors pb-1 text-xl">›</button>
+                        class="flex absolute right-1 md:-right-5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 md:w-10 md:h-10 items-center justify-center rounded-full bg-white/95 backdrop-blur shadow-lg border border-pink-100 text-gray-700 hover:text-pink-500 transition-colors pb-1 text-xl cursor-pointer">›</button>
                 </div>
             </section>
             
@@ -267,16 +268,17 @@
             <section class="py-16 md:py-20 overflow-hidden w-full relative">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 mb-10 text-center">
                     <span class="inline-block bg-pink-100 text-pink-600 text-xs font-extrabold uppercase tracking-widest px-4 py-1.5 rounded-full border border-pink-200 shadow-sm">Our Favorites</span>
-                   <h2 class="text-3xl md:text-4xl font-cloud font-semibold text-gray-900 mt-3 tracking-tight">Best Sellers</h2>
+                    <h2 class="text-3xl md:text-4xl font-cloud font-semibold text-gray-900 mt-3 tracking-tight">Best Sellers</h2>
                     <p class="text-gray-500 text-sm md:text-base mt-2">Tap any adorable companion to view full photos</p>
                 </div>
-               <div class="relative w-full overflow-hidden py-4">
-    <div class="absolute left-0 inset-y-0 w-24 md:w-48 bg-gradient-to-r from-[#F4E8FA] to-transparent z-10 pointer-events-none"></div>
-    <div class="absolute right-0 inset-y-0 w-24 md:w-48 bg-gradient-to-l from-[#F4E8FA] to-transparent z-10 pointer-events-none"></div>
-    
-    <!-- Updated for native swiping + JS auto-scroll -->
-    <div id="cutest-pepes-track" class="flex gap-8 overflow-x-auto no-scrollbar w-full items-center py-4 px-8 select-none cursor-grab active:cursor-grabbing"></div>
-</div>
+                <div class="relative w-full overflow-hidden py-4">
+                    <div class="absolute left-0 inset-y-0 w-24 md:w-48 bg-gradient-to-r from-[#F4E8FA] to-transparent z-10 pointer-events-none"></div>
+                    <div class="absolute right-0 inset-y-0 w-24 md:w-48 bg-gradient-to-l from-[#F4E8FA] to-transparent z-10 pointer-events-none"></div>
+                    
+                    <!-- Updated for native swiping + JS auto-scroll -->
+                    <div id="cutest-pepes-track" class="flex gap-8 overflow-x-auto no-scrollbar w-full items-center py-4 px-8 select-none cursor-grab active:cursor-grabbing"></div>
+                </div>
+            </section>
             
             <!-- SUB CATEGORIES / COLLECTIONS -->
             <section id="collections-section" class="max-w-6xl mx-auto px-4 sm:px-6 py-8 md:py-12">
@@ -285,68 +287,67 @@
                 </div>
                 <div class="relative">
                     <button type="button" data-arrow="left" onclick="scrollCategoryRow('collection-grid', -1)" aria-label="Scroll left"
-                        class="flex absolute left-1 md:-left-5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 md:w-10 md:h-10 items-center justify-center rounded-full bg-white/95 backdrop-blur shadow-lg border border-pink-100 text-gray-700 hover:text-pink-500 transition-colors pb-1 text-xl">‹</button>
+                        class="flex absolute left-1 md:-left-5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 md:w-10 md:h-10 items-center justify-center rounded-full bg-white/95 backdrop-blur shadow-lg border border-pink-100 text-gray-700 hover:text-pink-500 transition-colors pb-1 text-xl cursor-pointer">‹</button>
                     <div id="collection-grid" class="flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-4 no-scrollbar py-4 px-2 scroll-pl-2 overscroll-x-contain">
                         <!-- Dynamic categories go here -->
                     </div>
                     <button type="button" data-arrow="right" onclick="scrollCategoryRow('collection-grid', 1)" aria-label="Scroll right"
-                        class="flex absolute right-1 md:-right-5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 md:w-10 md:h-10 items-center justify-center rounded-full bg-white/95 backdrop-blur shadow-lg border border-pink-100 text-gray-700 hover:text-pink-500 transition-colors pb-1 text-xl">›</button>
+                        class="flex absolute right-1 md:-right-5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 md:w-10 md:h-10 items-center justify-center rounded-full bg-white/95 backdrop-blur shadow-lg border border-pink-100 text-gray-700 hover:text-pink-500 transition-colors pb-1 text-xl cursor-pointer">›</button>
                 </div>
             </section>
 
-           <!-- PRODUCT DISPLAY GRID (MODIFIED TO HORIZONTAL SWIPE WITH ARROWS) -->
-    <section id="product-display" class="max-w-5xl mx-auto px-4 sm:px-6 py-16 md:py-24 hidden opacity-0 transition-opacity duration-500">
-        <div class="flex items-center justify-between mb-8 md:mb-10 border-b border-gray-300 pb-4">
-            <h2 id="current-category-title" class="text-2xl md:text-3xl font-cloud font-semibold text-gray-900">Products</h2>
-            <button onclick="hideProducts()" class="text-xs md:text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors border border-gray-300 rounded-full px-4 md:px-5 py-2 bg-white/80 backdrop-blur hover:bg-white shadow-sm">
-                ← Back
-            </button>
-        </div>
-        
-        <!-- Relative Wrapper with Left/Right Scroll Buttons -->
-        <div class="relative">
-            <button type="button" onclick="scrollCategoryRow('product-grid', -1)" aria-label="Scroll left"
-                class="flex absolute left-1 md:-left-5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 md:w-10 md:h-10 items-center justify-center rounded-full bg-white/95 backdrop-blur shadow-lg border border-pink-100 text-gray-700 hover:text-pink-500 transition-colors pb-1 text-xl cursor-pointer">‹</button>
-            
-            <div id="product-grid" class="flex overflow-x-auto snap-x snap-mandatory gap-6 w-full no-scrollbar pb-8 px-2 scroll-pl-2 overscroll-x-contain">
-                <!-- Products rendered dynamically -->
-            </div>
+            <!-- PRODUCT DISPLAY GRID -->
+            <section id="product-display" class="max-w-5xl mx-auto px-4 sm:px-6 py-16 md:py-24 hidden opacity-0 transition-opacity duration-500">
+                <div class="flex items-center justify-between mb-8 md:mb-10 border-b border-gray-300 pb-4">
+                    <h2 id="current-category-title" class="text-2xl md:text-3xl font-cloud font-semibold text-gray-900">Products</h2>
+                    <button onclick="hideProducts()" class="text-xs md:text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors border border-gray-300 rounded-full px-4 md:px-5 py-2 bg-white/80 backdrop-blur hover:bg-white shadow-sm cursor-pointer">
+                        ← Back
+                    </button>
+                </div>
+                
+                <!-- Relative Wrapper with Left/Right Scroll Buttons -->
+                <div class="relative">
+                    <button type="button" onclick="scrollCategoryRow('product-grid', -1)" aria-label="Scroll left"
+                        class="flex absolute left-1 md:-left-5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 md:w-10 md:h-10 items-center justify-center rounded-full bg-white/95 backdrop-blur shadow-lg border border-pink-100 text-gray-700 hover:text-pink-500 transition-colors pb-1 text-xl cursor-pointer">‹</button>
+                    
+                    <div id="product-grid" class="flex overflow-x-auto snap-x snap-mandatory gap-6 w-full no-scrollbar pb-8 px-2 scroll-pl-2 overscroll-x-contain">
+                        <!-- Products rendered dynamically -->
+                    </div>
 
-            <button type="button" onclick="scrollCategoryRow('product-grid', 1)" aria-label="Scroll right"
-                class="flex absolute right-1 md:-right-5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 md:w-10 md:h-10 items-center justify-center rounded-full bg-white/95 backdrop-blur shadow-lg border border-pink-100 text-gray-700 hover:text-pink-500 transition-colors pb-1 text-xl cursor-pointer">›</button>
-        </div>
-    </section>
+                    <button type="button" onclick="scrollCategoryRow('product-grid', 1)" aria-label="Scroll right"
+                        class="flex absolute right-1 md:-right-5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 md:w-10 md:h-10 items-center justify-center rounded-full bg-white/95 backdrop-blur shadow-lg border border-pink-100 text-gray-700 hover:text-pink-500 transition-colors pb-1 text-xl cursor-pointer">›</button>
+                </div>
+            </section>
 
         </div>
     </div>
 
-    <!-- 3-CARD SHOWCASE SECTION (UPGRADED) -->
+    <!-- 3-CARD SHOWCASE SECTION (Lazy-loaded images) -->
     <section class="bg-section-1 relative overflow-hidden py-24 md:py-32 flex flex-col justify-center items-center w-full">
-        <!-- Softer blended backdrop -->
         <div class="absolute inset-0 bg-gradient-to-b from-[#F4E8FA]/80 via-white/40 to-[#F4E8FA]/90 backdrop-blur-sm z-0 pointer-events-none"></div>
 
         <div class="relative z-10 w-full max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-6 items-center mt-8">
-            <!-- Left Card (Tilted Left) -->
+            <!-- Left Card -->
             <div class="group relative w-full aspect-square md:aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-xl shadow-purple-900/10 border-2 border-white/80 bg-white md:-rotate-3 hover:rotate-0 hover:scale-105 hover:shadow-2xl transition-all duration-500 hover:z-20 cursor-pointer">
-                <img id="card-left-img" src="1.png" class="w-full h-full object-cover transition-opacity duration-700" alt="Showcase Left">
+                <img id="card-left-img" src="1.png" loading="lazy" decoding="async" class="w-full h-full object-cover transition-opacity duration-700" alt="Showcase Left">
                 <div class="absolute inset-0 bg-gradient-to-t from-pink-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 <div class="absolute bottom-5 left-5 right-5 h-1.5 bg-white/40 rounded-full overflow-hidden backdrop-blur-md">
                     <div id="progress-left" class="h-full bg-white w-0 rounded-full shadow-[0_0_10px_rgba(255,255,255,0.8)]"></div>
                 </div>
             </div>
             
-            <!-- Center Card (Scaled Up) -->
+            <!-- Center Card -->
             <div class="group relative w-full aspect-square md:aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-2xl shadow-pink-900/20 border-2 border-white bg-white md:scale-110 z-10 hover:scale-110 hover:-translate-y-2 transition-all duration-500 hover:z-20 cursor-pointer">
-                <img id="card-center-img" src="4.png" class="w-full h-full object-cover transition-opacity duration-700" alt="Showcase Center">
+                <img id="card-center-img" src="4.png" loading="lazy" decoding="async" class="w-full h-full object-cover transition-opacity duration-700" alt="Showcase Center">
                 <div class="absolute inset-0 bg-gradient-to-t from-pink-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 <div class="absolute bottom-5 left-5 right-5 h-1.5 bg-white/40 rounded-full overflow-hidden backdrop-blur-md">
                     <div id="progress-center" class="h-full bg-white w-0 rounded-full shadow-[0_0_10px_rgba(255,255,255,0.8)]"></div>
                 </div>
             </div>
             
-            <!-- Right Card (Tilted Right) -->
+            <!-- Right Card -->
             <div class="group relative w-full aspect-square md:aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-xl shadow-purple-900/10 border-2 border-white/80 bg-white md:rotate-3 hover:rotate-0 hover:scale-105 hover:shadow-2xl transition-all duration-500 hover:z-20 cursor-pointer">
-                <img id="card-right-img" src="7.png" class="w-full h-full object-cover transition-opacity duration-700" alt="Showcase Right">
+                <img id="card-right-img" src="7.png" loading="lazy" decoding="async" class="w-full h-full object-cover transition-opacity duration-700" alt="Showcase Right">
                 <div class="absolute inset-0 bg-gradient-to-t from-pink-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 <div class="absolute bottom-5 left-5 right-5 h-1.5 bg-white/40 rounded-full overflow-hidden backdrop-blur-md">
                     <div id="progress-right" class="h-full bg-white w-0 rounded-full shadow-[0_0_10px_rgba(255,255,255,0.8)]"></div>
@@ -367,7 +368,7 @@
                     materials, unique branding, and unparalleled softness.</p>
             </div>
             <div class="h-[300px] md:h-[450px] rounded-[2rem] overflow-hidden border border-white/50 shadow-lg">
-                <img src="11.png" class="w-full h-full object-cover" alt="About PEPEKUN">
+                <img src="11.png" loading="lazy" decoding="async" class="w-full h-full object-cover" alt="About PEPEKUN">
             </div>
         </div>
     </section>
@@ -431,7 +432,7 @@
         <div class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6">
             <div class="bg-white/90 backdrop-blur-md rounded-[3rem] border border-white shadow-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-12">
                 
-                <!-- Left Column: Brand Info & Support Details -->
+                <!-- Left Column -->
                 <div class="lg:col-span-5 bg-gradient-to-br from-purple-900 to-indigo-900 text-white p-8 md:p-12 flex flex-col justify-between">
                     <div>
                         <span class="inline-block bg-pink-500/20 text-pink-300 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4 border border-pink-500/30">Get in Touch</span>
@@ -464,34 +465,33 @@
                     <h3 class="text-2xl font-semibold text-gray-900 mb-2">Send a Message</h3>
                     <p class="text-gray-500 text-sm mb-8">Fill out the form below and we'll get back to your inbox shortly.</p>
 
-<!-- Replace YOUR_FORMSPREE_ID with your actual endpoint ID from formspree.io -->
-<form id="contact-form" action="https://formspree.io/f/YOUR_FORMSPREE_ID" method="POST" class="space-y-5 text-left">
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-        <div>
-            <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1.5">Your Name</label>
-            <input id="contact-name" name="name" type="text" placeholder="e.g. john doe"
-                class="w-full px-4 py-3.5 rounded-2xl border border-gray-200 focus:outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-100 bg-gray-50/50 text-sm transition-all"
-                required>
-        </div>
-        <div>
-            <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1.5">Email Address</label>
-            <input id="contact-email" name="email" type="email" placeholder="kuchupuchu@example.com"
-                class="w-full px-4 py-3.5 rounded-2xl border border-gray-200 focus:outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-100 bg-gray-50/50 text-sm transition-all"
-                required>
-        </div>
-    </div>
-    <div>
-        <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1.5">Your Message</label>
-        <textarea id="contact-message" name="message" rows="4" placeholder="How can we help you today?"
-            class="w-full px-4 py-3.5 rounded-2xl border border-gray-200 focus:outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-100 bg-gray-50/50 text-sm transition-all resize-none"
-            required></textarea>
-    </div>
-    <button id="contact-submit-btn" type="submit"
-        class="w-full py-4 bg-brand-900 text-white rounded-2xl font-semibold hover:bg-pink-500 transition-all shadow-md active:scale-98 cursor-pointer flex items-center justify-center gap-2">
-        <span>Send Message</span>
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-    </button>
-</form>
+                    <form id="contact-form" action="https://formspree.io/f/YOUR_FORMSPREE_ID" method="POST" class="space-y-5 text-left">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1.5">Your Name</label>
+                                <input id="contact-name" name="name" type="text" placeholder="e.g. john doe"
+                                    class="w-full px-4 py-3.5 rounded-2xl border border-gray-200 focus:outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-100 bg-gray-50/50 text-sm transition-all"
+                                    required>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1.5">Email Address</label>
+                                <input id="contact-email" name="email" type="email" placeholder="kuchupuchu@example.com"
+                                    class="w-full px-4 py-3.5 rounded-2xl border border-gray-200 focus:outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-100 bg-gray-50/50 text-sm transition-all"
+                                    required>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1.5">Your Message</label>
+                            <textarea id="contact-message" name="message" rows="4" placeholder="How can we help you today?"
+                                class="w-full px-4 py-3.5 rounded-2xl border border-gray-200 focus:outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-100 bg-gray-50/50 text-sm transition-all resize-none"
+                                required></textarea>
+                        </div>
+                        <button id="contact-submit-btn" type="submit"
+                            class="w-full py-4 bg-brand-900 text-white rounded-2xl font-semibold hover:bg-pink-500 transition-all shadow-md active:scale-98 cursor-pointer flex items-center justify-center gap-2">
+                            <span>Send Message</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </button>
+                    </form>
                 </div>
 
             </div>
@@ -504,17 +504,15 @@
             
             <!-- Brand & Bio with Logo -->
             <div class="space-y-4">
-                <img src="1pepe-logo.png" alt="PEPEKUN Logo" class="h-12 w-auto object-contain drop-shadow-sm">
+                <img src="1pepe-logo.png" alt="PEPEKUN Logo" class="h-12 w-auto object-contain drop-shadow-sm" loading="lazy" decoding="async">
                 <p class="text-gray-500 text-sm leading-relaxed font-medium">
                     Discover unparalleled softness with PepeKun. Premium plushies designed with personality, crafted with love.
                 </p>
                 <div class="flex gap-4 pt-2">
-                    <!-- Instagram Link -->
                     <a href="https://www.instagram.com/pepekun.toys?srtk=MTFtYnE2eGt0N2t5OA==" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-[#F4E8FA] hover:bg-pink-500 hover:text-white flex items-center justify-center transition-all duration-300 text-pink-500 shadow-sm border border-pink-100 hover:-translate-y-1" aria-label="Instagram">
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
                     </a>
                     
-                   <!-- Facebook Link (Official Brand Logo) -->
                     <a href="https://www.facebook.com/share/1BsFJrHz61/" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-white flex items-center justify-center transition-all duration-300 shadow-sm border border-gray-100 hover:shadow-md hover:-translate-y-1" aria-label="Facebook">
                         <svg class="w-6 h-6" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" fill="#1877F2"/>
@@ -535,7 +533,7 @@
                 </ul>
             </div>
 
-            <!-- PhonePe Policy Compliance Links -->
+            <!-- Policies -->
             <div>
                 <h4 class="text-xs font-bold uppercase tracking-wider text-pink-500 mb-4">Policies & Compliance</h4>
                 <ul class="space-y-3 text-sm text-gray-500 font-medium">
@@ -561,7 +559,7 @@
         <div class="relative w-full max-w-5xl bg-white rounded-[2rem] overflow-hidden shadow-2xl flex flex-col md:flex-row max-h-[90vh]">
 
             <button onclick="closeModal()"
-                class="absolute top-4 right-4 z-10 bg-white/80 backdrop-blur border border-gray-200 p-2 rounded-full hover:bg-gray-100 text-gray-800 transition-transform">
+                class="absolute top-4 right-4 z-10 bg-white/80 backdrop-blur border border-gray-200 p-2 rounded-full hover:bg-gray-100 text-gray-800 transition-transform cursor-pointer">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
@@ -570,10 +568,8 @@
             <!-- Image Track & Thumbnails Area -->
             <div class="md:w-1/2 p-6 bg-gray-50 flex flex-col gap-4 overflow-y-auto border-r border-gray-100">
                 <div class="relative w-full aspect-square rounded-[2rem] overflow-hidden bg-white border border-gray-100 shadow-sm group/modal-slider">
-                    <!-- Swipeable Track container -->
                     <div id="modal-swipe-track" class="flex overflow-x-auto snap-x snap-mandatory h-full w-full no-scrollbar relative z-10"></div>
 
-                    <!-- Desktop Navigation Arrows -->
                     <button onclick="scrollModalSlider(-1)" class="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 border border-gray-200 backdrop-blur hover:bg-gray-50 text-gray-900 w-10 h-10 rounded-full items-center justify-center opacity-0 group-hover/modal-slider:opacity-100 transition-all shadow-md z-30 pb-1 text-2xl leading-none cursor-pointer">‹</button>
                     <button onclick="scrollModalSlider(1)" class="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 border border-gray-200 backdrop-blur hover:bg-gray-50 text-gray-900 w-10 h-10 rounded-full items-center justify-center opacity-0 group-hover/modal-slider:opacity-100 transition-all shadow-md z-30 pb-1 text-2xl leading-none cursor-pointer">›</button>
                 </div>
@@ -583,22 +579,21 @@
 
             <!-- Details Area -->
             <div class="md:w-1/2 p-6 md:p-8 flex flex-col overflow-y-auto">
-                <div class="text-[11px] text-gray-500 font-bold tracking-widest uppercase mb-2" id="modal-category">
-                </div>
+                <div class="text-[11px] text-gray-500 font-bold tracking-widest uppercase mb-2" id="modal-category"></div>
                 <h2 class="text-3xl md:text-4xl font-semibold text-gray-900 mb-2" id="modal-title"></h2>
                 <div class="text-xl font-medium text-gray-600 mb-6" id="modal-price"></div>
 
-        <!-- DYNAMIC COLOR SELECTION -->
-<div id="modal-colors-container" class="mb-6 hidden">
-    <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Select Color <span class="text-pink-500">*</span></label>
-    <div id="modal-color-options" class="flex items-center gap-2 flex-wrap"></div>
-</div>
+                <!-- DYNAMIC COLOR SELECTION -->
+                <div id="modal-colors-container" class="mb-6 hidden">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Select Color <span class="text-pink-500">*</span></label>
+                    <div id="modal-color-options" class="flex items-center gap-2 flex-wrap"></div>
+                </div>
 
-<!-- DYNAMIC SIZE SELECTION -->
-<div id="modal-sizes-container" class="mb-6 hidden">
-    <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Select Size <span class="text-pink-500">*</span></label>
-    <div id="modal-size-options" class="flex items-center gap-2 flex-wrap"></div>
-</div>
+                <!-- DYNAMIC SIZE SELECTION -->
+                <div id="modal-sizes-container" class="mb-6 hidden">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Select Size <span class="text-pink-500">*</span></label>
+                    <div id="modal-size-options" class="flex items-center gap-2 flex-wrap"></div>
+                </div>
 
                 <div class="flex gap-6 border-b border-gray-200 mb-6">
                     <button onclick="switchTab('desc')" id="tab-btn-desc"
@@ -614,9 +609,9 @@
 
                 <div class="mt-auto flex gap-4 pt-8">
                     <button id="modal-add-cart-btn"
-                        class="flex-1 bg-white border border-gray-300 text-gray-800 py-4 rounded-full font-medium hover:border-gray-900 transition-colors shadow-sm">Add
+                        class="flex-1 bg-white border border-gray-300 text-gray-800 py-4 rounded-full font-medium hover:border-gray-900 transition-colors shadow-sm cursor-pointer">Add
                         to Cart</button>
-                    <button id="modal-buy-now-btn" onclick="window.location.href='checkout.html'" class="flex-1 bg-brand-900 text-white py-4 rounded-full font-medium hover:bg-pink-500 transition-colors shadow-md">Buy Now</button>
+                    <button id="modal-buy-now-btn" onclick="window.location.href='checkout.html'" class="flex-1 bg-brand-900 text-white py-4 rounded-full font-medium hover:bg-pink-500 transition-colors shadow-md cursor-pointer">Buy Now</button>
                 </div>
             </div>
         </div>
