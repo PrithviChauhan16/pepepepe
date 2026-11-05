@@ -146,6 +146,9 @@
                             class="text-gray-400 hover:text-gray-900 text-xl font-bold">&times;</button>
                     </div>
                     <form id="product-form" class="space-y-6">
+                        <!-- Hidden Field for Product ID when Editing -->
+                        <input type="hidden" id="edit-product-id">
+
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div class="md:col-span-2">
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Product Title</label>
@@ -211,8 +214,7 @@
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Product Images (Upload up to 4
-                                images)</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Product Images (Upload up to 4 images)</label>
                             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                                 <div>
                                     <span class="text-xs text-gray-500 mb-1 block">Main Image *</span>
@@ -244,8 +246,7 @@
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Specifications (One per
-                                line)</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Specifications (One per line)</label>
                             <textarea id="prod-specs" rows="3" placeholder="Specifications"
                                 class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:outline-none focus:border-pink-400 text-sm"></textarea>
                         </div>
@@ -375,6 +376,7 @@
         let cachedOrders = [];
         let cachedInquiries = [];
         let cachedCategoriesMap = {};
+        let cachedProducts = [];
 
         function toggleMobileSidebar() {
             const sidebar = document.getElementById('sidebar');
@@ -819,6 +821,7 @@
 
         function openAddProduct() {
             form.reset();
+            document.getElementById('edit-product-id').value = '';
             document.getElementById('form-title').innerText = 'Add New Product';
             document.getElementById('submit-btn').innerText = 'Save Product';
             populateCategoryDropdown();
@@ -830,7 +833,7 @@
             formContainer.classList.add('hidden');
         }
 
-        async function populateCategoryDropdown() {
+        async function populateCategoryDropdown(selectedCategoryIds = []) {
             const client = window.supabaseClient;
             if (!client) return;
 
@@ -845,8 +848,11 @@
 
             if (error) return;
 
+            cachedCategoriesMap = {};
+            (categories || []).forEach(c => { cachedCategoriesMap[c.id] = c.name; });
+
             const checked = new Set(
-                Array.from(document.querySelectorAll('.prod-cat-checkbox:checked')).map(c => c.value)
+                selectedCategoryIds.length > 0 ? selectedCategoryIds : Array.from(document.querySelectorAll('.prod-cat-checkbox:checked')).map(c => c.value)
             );
 
             const render = (list, el, emptyMsg, isSub) => {
@@ -886,7 +892,7 @@
 
             const { data: products, error } = await client
                 .from('products')
-                .select('*, product_categories(categories(name, section))')
+                .select('*, product_categories(categories(name, section, id))')
                 .order('created_at', { ascending: false });
 
             if (error || !products || products.length === 0) {
@@ -894,6 +900,7 @@
                 return;
             }
 
+            cachedProducts = products;
             grid.innerHTML = '';
             products.forEach(prod => {
                 const card = document.createElement('div');
@@ -916,7 +923,6 @@
                 const isBestSeller = Boolean(prod.is_bestseller);
                 const isSoldOut = Boolean(prod.sold_out);
 
-                // DYNAMIC PRICE & DISCOUNT BADGE DISPLAY FOR ADMIN
                 let sellingPrice = parseFloat(prod.price || 0);
                 let originalPrice = parseFloat(prod.original_price || 0);
                 let discountPercent = parseFloat(prod.discount || 0);
@@ -956,21 +962,54 @@
                 ${sizesList}
                 <p class="text-gray-500 text-xs line-clamp-2 mb-4">${prod.description || ''}</p>
             </div>
-            <div class="absolute top-3 right-3 flex items-center gap-2">
-                <button onclick="toggleSoldOut('${prod.id}', ${isSoldOut})" title="${isSoldOut ? 'Mark as In Stock' : 'Mark as Sold Out'}" class="flex items-center gap-1.5 bg-white/90 backdrop-blur rounded-full pl-2.5 pr-1.5 py-1.5 shadow-sm border border-gray-100 hover:scale-105 transition-transform">
-                    <span class="text-[10px] font-bold uppercase tracking-wide ${isSoldOut ? 'text-red-600' : 'text-gray-500'}">Sold out</span>
-                    <span class="relative inline-block w-8 h-4 rounded-full transition-colors ${isSoldOut ? 'bg-red-500' : 'bg-gray-300'}"><span class="absolute top-0.5 ${isSoldOut ? 'left-[18px]' : 'left-0.5'} w-3 h-3 bg-white rounded-full transition-all"></span></span>
-                </button>
-                <button onclick="toggleBestSeller('${prod.id}', ${isBestSeller})" title="${isBestSeller ? 'Remove from Best Sellers' : 'Mark as Best Seller'}" class="bg-white/90 backdrop-blur rounded-full p-2 shadow-sm border border-gray-100 hover:scale-110 transition-transform">
-                    <span class="text-lg leading-none block">${isBestSeller ? '⭐' : '☆'}</span>
-                </button>
-                <button onclick="deleteProduct('${prod.id}')" class="text-red-400 hover:text-red-600 md:hidden md:group-hover/card:block bg-red-50 rounded-full p-2 transition-colors">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                </button>
+            <div class="flex items-center justify-between pt-4 border-t border-gray-100 mt-auto">
+                <div class="flex items-center gap-2">
+                    <button onclick="toggleSoldOut('${prod.id}', ${isSoldOut})" title="${isSoldOut ? 'Mark as In Stock' : 'Mark as Sold Out'}" class="flex items-center gap-1.5 bg-gray-50 rounded-full pl-2.5 pr-1.5 py-1 shadow-sm border border-gray-100">
+                        <span class="text-[10px] font-bold uppercase tracking-wide ${isSoldOut ? 'text-red-600' : 'text-gray-500'}">Sold</span>
+                        <span class="relative inline-block w-6 h-3 rounded-full transition-colors ${isSoldOut ? 'bg-red-500' : 'bg-gray-300'}"><span class="absolute top-0.5 ${isSoldOut ? 'left-[14px]' : 'left-0.5'} w-2 h-2 bg-white rounded-full transition-all"></span></span>
+                    </button>
+                    <button onclick="toggleBestSeller('${prod.id}', ${isBestSeller})" title="${isBestSeller ? 'Remove Best Seller' : 'Mark Best Seller'}" class="bg-gray-50 rounded-full px-2.5 py-1 text-xs shadow-sm border border-gray-100 font-medium">
+                        ${isBestSeller ? '⭐ Star' : '☆ Star'}
+                    </button>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="openEditProduct('${prod.id}')" class="text-xs font-medium bg-pink-50 text-pink-600 px-3 py-1.5 rounded-full hover:bg-pink-100 transition-colors">
+                        ✏️ Edit
+                    </button>
+                    <button onclick="deleteProduct('${prod.id}')" class="text-red-400 hover:text-red-600 bg-red-50 rounded-full p-1.5 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    </button>
+                </div>
             </div>
         `;
                 grid.appendChild(card);
             });
+        }
+
+        // ==================== EDIT PRODUCT FUNCTIONS ====================
+        function openEditProduct(productId) {
+            const prod = cachedProducts.find(p => String(p.id) === String(productId));
+            if (!prod) return;
+
+            form.reset();
+            document.getElementById('edit-product-id').value = prod.id;
+            document.getElementById('form-title').innerText = 'Edit Product: ' + prod.title;
+            document.getElementById('submit-btn').innerText = 'Update Product';
+
+            document.getElementById('prod-title').value = prod.title || '';
+            document.getElementById('prod-original-price').value = prod.original_price || '';
+            document.getElementById('prod-discount').value = prod.discount || '';
+            document.getElementById('prod-price').value = prod.price || '';
+            document.getElementById('prod-colors').value = Array.isArray(prod.colors) ? prod.colors.join(', ') : '';
+            document.getElementById('prod-sizes').value = Array.isArray(prod.sizes) ? prod.sizes.join(', ') : '';
+            document.getElementById('prod-desc').value = prod.description || '';
+            document.getElementById('prod-specs').value = Array.isArray(prod.specifications) ? prod.specifications.join('\n') : '';
+
+            const linkedCatIds = (prod.product_categories || []).map(pc => pc.categories?.id).filter(Boolean);
+            populateCategoryDropdown(linkedCatIds);
+
+            formContainer.classList.remove('hidden');
+            formContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
         async function toggleBestSeller(productId, currentStatus) {
@@ -978,7 +1017,6 @@
             if (!client) return;
 
             const newStatus = !currentStatus;
-
             const { error } = await client
                 .from('products')
                 .update({ is_bestseller: newStatus })
@@ -990,7 +1028,6 @@
                 await fetchProducts();
             }
         }
-
         window.toggleBestSeller = toggleBestSeller;
 
         async function toggleSoldOut(productId, currentStatus) {
@@ -1008,13 +1045,13 @@
                 await fetchProducts();
             }
         }
-
         window.toggleSoldOut = toggleSoldOut;
 
         async function saveProduct() {
             const client = window.supabaseClient;
             if (!client) return;
 
+            const editId = document.getElementById('edit-product-id').value;
             const title = document.getElementById('prod-title').value.trim();
             const mainIds = Array.from(document.querySelectorAll('.prod-cat-main:checked')).map(c => c.value);
             const subIds = Array.from(document.querySelectorAll('.prod-cat-sub:checked')).map(c => c.value);
@@ -1034,14 +1071,11 @@
 
             const description = document.getElementById('prod-desc').value.trim();
             const specsRaw = document.getElementById('prod-specs').value.trim();
-
             const colorsRaw = document.getElementById('prod-colors').value.trim();
             const colors = colorsRaw ? colorsRaw.split(',').map(c => c.trim()).filter(Boolean) : [];
-
             const sizesRaw = document.getElementById('prod-sizes').value.trim();
             const sizes = sizesRaw ? sizesRaw.split(',').map(s => s.trim()).filter(Boolean) : [];
 
-            // RELAXED VALIDATION: Must select at least ONE category (either main or sub)
             if (!title || categoryIds.length === 0 || isNaN(finalPriceVal)) {
                 alert('Please fill in the product title, tick at least one category, and set a price/original price.');
                 return;
@@ -1049,11 +1083,19 @@
 
             const submitBtn = document.getElementById('submit-btn');
             submitBtn.disabled = true;
-            submitBtn.innerText = 'Uploading & Saving...';
+            submitBtn.innerText = editId ? 'Updating Product...' : 'Uploading & Saving...';
 
             const specifications = specsRaw ? specsRaw.split('\n').filter(line => line.trim() !== '') : [];
 
-            const imageUrls = [];
+            // Grab existing product images if editing
+            let imageUrls = [];
+            if (editId) {
+                const existingProd = cachedProducts.find(p => String(p.id) === String(editId));
+                if (existingProd && Array.isArray(existingProd.images)) {
+                    imageUrls = [...existingProd.images];
+                }
+            }
+
             const imageInputs = [
                 document.getElementById('prod-img-1'),
                 document.getElementById('prod-img-2'),
@@ -1080,7 +1122,12 @@
                             .getPublicUrl(filePath);
 
                         if (urlData?.publicUrl) {
-                            imageUrls.push(urlData.publicUrl);
+                            // If a new image is uploaded in slot 1, 2, etc., replace or add
+                            if (i < imageUrls.length) {
+                                imageUrls[i] = urlData.publicUrl;
+                            } else {
+                                imageUrls.push(urlData.publicUrl);
+                            }
                         }
                     }
                 }
@@ -1098,25 +1145,41 @@
                     sizes: sizes
                 };
 
-                const { data: newProduct, error: insertError } = await client
-                    .from('products')
-                    .insert([productPayload])
-                    .select('id')
-                    .single();
+                let savedProductId = editId;
 
-                if (insertError) throw insertError;
+                if (editId) {
+                    // UPDATE EXISTING PRODUCT
+                    const { error: updateError } = await client
+                        .from('products')
+                        .update(productPayload)
+                        .eq('id', editId);
 
-                const links = categoryIds.map(cid => ({ product_id: newProduct.id, category_id: cid }));
+                    if (updateError) throw updateError;
+
+                    // Delete old category links and re-insert new ones
+                    await client.from('product_categories').delete().eq('product_id', editId);
+                } else {
+                    // INSERT NEW PRODUCT
+                    const { data: newProduct, error: insertError } = await client
+                        .from('products')
+                        .insert([productPayload])
+                        .select('id')
+                        .single();
+
+                    if (insertError) throw insertError;
+                    savedProductId = newProduct.id;
+                }
+
+                // Insert category junction rows
+                const links = categoryIds.map(cid => ({ product_id: savedProductId, category_id: cid }));
                 const { error: linkError } = await client
                     .from('product_categories')
                     .insert(links);
 
-                if (linkError) {
-                    await client.from('products').delete().eq('id', newProduct.id);
-                    throw linkError;
-                }
+                if (linkError) throw linkError;
 
                 form.reset();
+                document.getElementById('edit-product-id').value = '';
                 closeProductForm();
                 await fetchProducts();
 
@@ -1318,6 +1381,7 @@
         window.closeInquiryModal = closeInquiryModal;
         window.deleteInquiry = deleteInquiry;
         window.openAddProduct = openAddProduct;
+        window.openEditProduct = openEditProduct;
         window.closeProductForm = closeProductForm;
         window.saveProduct = saveProduct;
         window.deleteProduct = deleteProduct;
