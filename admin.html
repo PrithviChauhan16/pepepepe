@@ -8,7 +8,7 @@
     <link rel="icon" href="1pepe-logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- SUPABASE JS CLIENT  CDN -->
+    <!-- SUPABASE JS CLIENT CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         if (window.tailwind) {
@@ -32,15 +32,12 @@
 
 <body class="bg-gray-50 text-brand-900 antialiased font-sans flex flex-col md:flex-row h-screen overflow-hidden">
 
-    <!-- MOBILE TOP BAR -->
-    <div
-        class="md:hidden flex items-center justify-between bg-white border-b border-gray-200 px-6 py-4 z-30 flex-shrink-0">
-        <span class="text-lg font-bold tracking-widest uppercase">PEPEKUN <span
-                class="text-pink-500 text-xs">ADMIN</span></span>
+    <!-- RESTORED MOBILE TOP BAR WITH HAMBURGER BUTTON -->
+    <div class="md:hidden flex items-center justify-between bg-white border-b border-gray-200 px-6 py-4 z-30 flex-shrink-0">
+        <span class="text-lg font-bold tracking-widest uppercase">PEPEKUN <span class="text-pink-500 text-xs">ADMIN</span></span>
         <button onclick="toggleMobileSidebar()" class="p-2 text-gray-600 hover:text-pink-500 focus:outline-none">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16">
-                </path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
             </svg>
         </button>
     </div>
@@ -1087,7 +1084,6 @@
 
             const specifications = specsRaw ? specsRaw.split('\n').filter(line => line.trim() !== '') : [];
 
-            // Grab existing product images if editing
             let imageUrls = [];
             if (editId) {
                 const existingProd = cachedProducts.find(p => String(p.id) === String(editId));
@@ -1122,7 +1118,6 @@
                             .getPublicUrl(filePath);
 
                         if (urlData?.publicUrl) {
-                            // If a new image is uploaded in slot 1, 2, etc., replace or add
                             if (i < imageUrls.length) {
                                 imageUrls[i] = urlData.publicUrl;
                             } else {
@@ -1148,7 +1143,6 @@
                 let savedProductId = editId;
 
                 if (editId) {
-                    // UPDATE EXISTING PRODUCT
                     const { error: updateError } = await client
                         .from('products')
                         .update(productPayload)
@@ -1156,10 +1150,8 @@
 
                     if (updateError) throw updateError;
 
-                    // Delete old category links and re-insert new ones
                     await client.from('product_categories').delete().eq('product_id', editId);
                 } else {
-                    // INSERT NEW PRODUCT
                     const { data: newProduct, error: insertError } = await client
                         .from('products')
                         .insert([productPayload])
@@ -1170,7 +1162,6 @@
                     savedProductId = newProduct.id;
                 }
 
-                // Insert category junction rows
                 const links = categoryIds.map(cid => ({ product_id: savedProductId, category_id: cid }));
                 const { error: linkError } = await client
                     .from('product_categories')
