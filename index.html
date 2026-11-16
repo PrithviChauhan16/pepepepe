@@ -49,9 +49,27 @@
             scrollbar-width: none;
         }
 
-        /* Background images removed to save egress memory */
-        .bg-section-1, .bg-section-2 {
-            background-color: transparent;
+        .bg-section-1 {
+            background-image: url('spinning2.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: scroll;
+        }
+
+        .bg-section-2 {
+            background-image: url('spinning1.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: scroll;
+        }
+
+        @media (min-width: 768px) {
+            .bg-section-1,
+            .bg-section-2 {
+                background-attachment: fixed;
+            }
         }
         @keyframes marquee {
             0% { transform: translateX(0%); }
